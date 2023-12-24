@@ -11,6 +11,8 @@
 #include <string>
 
 using namespace std;
+#define ll long long
+
 vector<string> split(string s);
 
 int main() {
