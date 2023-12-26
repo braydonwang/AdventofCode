@@ -14,6 +14,7 @@ using namespace std;
 #define ll long long
 
 vector<string> split(string s);
+vector<int> splitInt(string s, char ch);
 
 int main() {
     ifstream f {"day1.in"};
@@ -33,6 +34,19 @@ vector<string> split(string s) {
 
     while (ss >> str) {
         vec.push_back(str);
+    }
+    return vec;
+}
+
+vector<int> splitInt(string s, char ch) {
+    stringstream ss(s);
+    vector<int> vec;
+
+    for (int i; ss >> i;) {
+        vec.push_back(i);
+        if (ss.peek() == ch) {
+            ss.ignore();
+        }
     }
     return vec;
 }
