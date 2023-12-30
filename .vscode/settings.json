@@ -74,6 +74,7 @@
     "queue": "cpp",
     "set": "cpp",
     "valarray": "cpp",
-    "list": "cpp"
+    "list": "cpp",
+    "filesystem": "cpp"
   }
 }
