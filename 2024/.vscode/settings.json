@@ -8,6 +8,14 @@
         "ostream": "cpp",
         "ios": "cpp",
         "queue": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "iostream": "cpp",
+        "iosfwd": "cpp",
+        "set": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp",
+        "__locale": "cpp",
+        "regex": "cpp",
+        "string_view": "cpp"
     }
 }
