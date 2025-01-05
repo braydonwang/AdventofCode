@@ -2,50 +2,7 @@
 
 using ll = long long;
 
-int ans = INT_MAX;
-set<pair<int,int>> tiles;
-
 const vector<vector<int>> dir = {{0,1},{1,0},{0,-1},{-1,0}};
-
-bool inBounds(int row, int col, int r, int c) {
-    return row >= 0 && row < r && col >= 0 && col < c;
-}
-
-bool solve(int row, int col, int curdir, int er, int ec, int r, int c, vector<vector<char>> &grid, vector<vector<vector<int>>> &dp) {
-    if (row == er && col == ec) {
-        if (dp[row][col][curdir] < ans) {
-            ans = dp[row][col][curdir];
-            tiles.clear();
-            return true;
-        } else if (dp[row][col][curdir] == ans) {
-            return true;
-        }
-        return false;
-    }
-
-    bool good = false;
-
-    int newrow = row + dir[curdir][0], newcol = col + dir[curdir][1];
-    if (inBounds(newrow, newcol, r, c) && grid[newrow][newcol] != '#' && dp[row][col][curdir] + 1 <= dp[newrow][newcol][curdir]) {
-        dp[newrow][newcol][curdir] = dp[row][col][curdir] + 1;
-        good |= solve(newrow, newcol, curdir, er, ec, r, c, grid, dp);
-    }
-
-    int newdir = (curdir + 3) % 4;
-    if (dp[row][col][curdir] + 1000 <= dp[row][col][newdir]) {
-        dp[row][col][newdir] = dp[row][col][curdir] + 1000;
-        good |= solve(row, col, newdir, er, ec, r, c, grid, dp);
-    }
-
-    newdir = (curdir + 1) % 4;
-    if (dp[row][col][curdir] + 1000 <= dp[row][col][newdir]) {
-        dp[row][col][newdir] = dp[row][col][curdir] + 1000;
-        good |= solve(row, col, newdir, er, ec, r, c, grid, dp);
-    }
-
-    if (good) tiles.insert({row, col});
-    return good;
-}
 
 int main() {
     ifstream f {"day16.in"};
@@ -60,35 +17,69 @@ int main() {
     }
 
     int r = grid.size(), c = grid[0].size();
-    vector<vector<vector<int>>> dp(r, vector<vector<int>>(c, vector<int>(4, INT_MAX)));
-    
-    int sr = 0, sc = 0, er = 0, ec = 0;
+    int sr = 0, sc = 0;
     for (int i = 0; i < r; i++) {
         for (int j = 0; j < c; j++) {
             if (grid[i][j] == 'S') {
                 sr = i; sc = j;
-            } else if (grid[i][j] == 'E') {
-                er = i; ec = j;
+                break;
             }
         }
     }
 
-    int curdir = 0;
-    dp[sr][sc][curdir] = 0;
+    priority_queue<vector<int>, vector<vector<int>>, greater<vector<int>>> pq;
+    map<vector<int>, int> costs;
+    map<vector<int>, vector<vector<int>>> pre;
+    queue<vector<int>> states;
 
-    solve(sr, sc, curdir, er, ec, r, c, grid, dp);
+    pq.push({0, sr, sc, 0});
+    costs[{sr, sc, 0}] = 0;
+    int ans = INT_MAX;
 
-    // for (pair<int,int> p: tiles) {
-    //     grid[p.first][p.second] = 'O';
-    // }
+    while (!pq.empty()) {
+        vector<int> cur = pq.top(); pq.pop();
+        int cost = cur[0], row = cur[1], col = cur[2], d = cur[3];
+        if (grid[row][col] == 'E') {
+            if (cost > ans) continue;
+            if (cost < ans) states = queue<vector<int>>();
+            states.push({row, col, d});
+        }
 
-    // for (int i = 0; i < r; i++) {
-    //     for (int j = 0; j < c; j++) {
-    //         cout << grid[i][j];
-    //     }
-    //     cout << endl;
-    // }
-    // cout << endl;
+        int nr = row + dir[d][0], nc = col + dir[d][1];
+        if (grid[nr][nc] != '#') {
+            if (costs.find({nr, nc, d}) == costs.end() || costs[{nr, nc, d}] > cost + 1) {
+                costs[{nr, nc, d}] = cost + 1;
+                pq.push({cost + 1, nr, nc, d});
+                pre[{nr, nc, d}] = {{row, col, d}};
+            } else if (costs[{nr, nc, d}] == cost + 1) {
+                pre[{nr, nc, d}].push_back({row, col, d});
+            }
+        }
 
-    cout << tiles.size() + 1 << endl;
+        for (int nd: {(d+1)%4, (d+3)%4}) {
+            if (costs.find({row, col, nd}) == costs.end() || costs[{row, col, nd}] > cost + 1000) {
+                costs[{row, col, nd}] = cost + 1000;
+                pq.push({cost + 1000, row, col, nd});
+                pre[{row, col, nd}] = {{row, col, d}};
+            } else if (costs[{row, col, nd}] == cost + 1000) {
+                pre[{row, col, nd}].push_back({row, col, d});
+            }
+        }
+    }
+
+    set<pair<int,int>> tiles;
+    set<vector<int>> seen;
+
+    while (!states.empty()) {
+        vector<int> cur = states.front(); states.pop();
+        tiles.insert({cur[0], cur[1]});
+        for (vector<int> &nxt: pre[cur]) {
+            if (!seen.contains(nxt)) {
+                seen.insert(nxt);
+                states.push(nxt);
+            }
+        }
+    }
+
+    cout << tiles.size() << endl;
 }
