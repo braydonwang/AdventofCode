@@ -13,7 +13,6 @@ string make(char ch, int num) {
 }
 
 bool verifyPair(string a, string b, int num) {
-    // cout << a << " " << b << " " << make('x', num) << " " << make('y', num) << endl;
     return (a == make('x', num) && b == make('y', num)) || (b == make('x', num) && a == make('y', num));
 }
 
