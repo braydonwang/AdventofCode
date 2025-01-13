@@ -23,6 +23,21 @@
         "bitset": "cpp",
         "initializer_list": "cpp",
         "istream": "cpp",
-        "ratio": "cpp"
+        "ratio": "cpp",
+        "sstream": "cpp",
+        "map": "cpp",
+        "__bit_reference": "cpp",
+        "forward_list": "cpp",
+        "valarray": "cpp",
+        "span": "cpp",
+        "__node_handle": "cpp",
+        "tuple": "cpp",
+        "execution": "cpp",
+        "memory": "cpp",
+        "fstream": "cpp",
+        "future": "cpp",
+        "optional": "cpp",
+        "streambuf": "cpp",
+        "variant": "cpp"
     }
 }
